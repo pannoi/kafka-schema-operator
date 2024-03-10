@@ -80,6 +80,7 @@ spec:
   name: testing
   schemaSerializer: string
   autoReconciliation: true # true = autoUpdate schema, false = for update CR should be re-created (not set => false)
+  deletionPolicy: soft # if not specified == soft, hard => ?permanent=true, https://docs.confluent.io/platform/current/schema-registry/schema-deletion-guidelines.html#schemaregistry-deletion
   terminationProtection: true # true = don't delete resources on CR deletion, false = when CR deleted, deletes all resource: ConfigMap, Schema from registry (not set => false)
   data:
     configRef: kafka-schema # ConfigMap
