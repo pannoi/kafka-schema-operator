@@ -37,6 +37,8 @@ spec:
             properties:
               autoReconciliation:
                 type: boolean
+              deletionPolicy:
+                type: string
               data:
                 properties:
                   compatibility:

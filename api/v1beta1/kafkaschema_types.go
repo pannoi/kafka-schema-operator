@@ -34,6 +34,7 @@ type KafkaSchemaSpec struct {
 	Name                  string          `json:"name"`
 	SchemaSerializer      string          `json:"schemaSerializer"`
 	AutoReconciliation    bool            `json:"autoReconciliation,omitempty"`
+	DeletionPolicy        string          `json:"deletionPolicy,omitempty"`
 	TerminationProtection bool            `json:"terminationProtection,omitempty"`
 	Data                  KafkaSchemaData `json:"data"`
 }
