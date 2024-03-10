@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.2] - 2024-08-10
+
+### Added
+  - `deletionPolocy` (optional) to handle soft/hard delete mechanism for schema deletion
+
+### Changed
+  - Update `DELETE` method to use `subjects/<:subject>` method according to confluent best pracitces
+
+### Fixed
+  - Syntax error to reference parameters in `helm/deployment.yaml`
+
 ## [0.1.1] - 2023-05-17
 
 ### Added
