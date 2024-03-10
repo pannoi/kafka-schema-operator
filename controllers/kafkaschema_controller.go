@@ -79,7 +79,7 @@ func generateSchemaCompatibilityUrl(subject string) (string, error) {
 	return url.String(), nil
 }
 
-func generateSchemaDeletionUrl(subject string) (string, error) {
+func generateSchemaDeletionUrl(subject string, deletionPolicy string) (string, error) {
 	schemaRegistryHost := os.Getenv("SCHEMA_REGISTRY_HOST")
 	schemaRegistryPort := os.Getenv("SCHEMA_REGISTRY_PORT")
 	if len(schemaRegistryHost) == 0 || len(schemaRegistryPort) == 0 {
@@ -90,9 +90,12 @@ func generateSchemaDeletionUrl(subject string) (string, error) {
 	url.WriteString(schemaRegistryHost)
 	url.WriteString(":")
 	url.WriteString(schemaRegistryPort)
-	url.WriteString("/config/")
+	url.WriteString("/subjects/")
 	url.WriteString(subject)
-	url.WriteString("?permanent=true")
+
+	if deletionPolicy == "hard" {
+		url.WriteString("?permanent=true")
+	}
 
 	return url.String(), nil
 }
@@ -175,12 +178,12 @@ func (r *KafkaSchemaReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 				return ctrl.Result{}, err
 			}
 			log.Info("ConfigMap was deleted: " + schema.Spec.Data.ConfigRef)
-			keyDeletionUrl, err := generateSchemaDeletionUrl(schemaKey)
+			keyDeletionUrl, err := generateSchemaDeletionUrl(schemaKey, schema.Spec.DeletionPolicy)
 			if err != nil {
 				log.Error(err, "Cannot create deletion url")
 				return ctrl.Result{}, err
 			}
-			valueDeletionUrl, err := generateSchemaDeletionUrl(schemaValue)
+			valueDeletionUrl, err := generateSchemaDeletionUrl(schemaValue, schema.Spec.DeletionPolicy)
 			if err != nil {
 				log.Error(err, "Cannot create deletion url")
 				return ctrl.Result{}, err
@@ -195,7 +198,7 @@ func (r *KafkaSchemaReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 				log.Error(err, "Failed to delete schema value from registry: "+schemaValue)
 				return ctrl.Result{}, err
 			}
-			log.Info("Schema was removed from registry")
+			log.Info("Schema was removed from registry, deletionPolicy: %s", schema.Spec.DeletionPolicy)
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, nil
